@@ -1,0 +1,338 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anjita Kandel</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+
+
+        <section id="navbar" class="navbar">
+            <div class="brand">
+                <img src="{% static 'images/logo.png' %}" alt="" class="logo">
+                <div class="brand-name"><b>Anjita Kandel</b></div>
+
+            </div>
+
+            <div class="hamburger" id="hamburger">
+                &#9776;
+            </div>
+            <div class="cross" id="cross">
+                &times;
+            </div>
+
+
+
+
+            <ul id="nav-links" class="nav-links">
+                <li class="li"><a class="a" href="#home">Home</a></li>
+                <li class="li"><a class="a" href="#about">About</a></li>
+                <li class="li"><a class="a" href="#services">Services</a></li>
+                <li class="li"><a class="a" href="#skills">Skills</a></li>
+                <li class="li"><a class="a" href="#contact">Contact</a></li>
+            </ul>
+        </section>
+
+
+
+        <section>
+
+            <div class="brandforresponsive">
+                <img src="{% static 'images/logo.png' %}" alt="Anjita Kandel logo" class="logoforresponsive">
+                <div class="brand-nameforresponsive"><b>Anjita Kandel</b></div>
+
+            </div>
+        </section>
+
+
+
+
+        <section id="home" class="home">
+            <div class="text half">
+                <div class="helloworld">
+                    Hello !
+                </div>
+                <div class="name">
+                    I'm Anjita Kandel
+                </div>
+                <div class="highlights">
+
+                    I'm <div id="typed_text">
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="image half">
+                <div class="rectangle">
+                    <div class="insiderectangle">
+                        <div class = "userphoto">
+
+                            <img src="{% static 'images/myphoto.jpg' %}" >
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="halfrectangle">
+                </div>
+
+            </div>
+
+        </section>
+        
+        <div id="about">
+            <div class ="container">
+                <div class ="row">
+                    <div class ="about-col-1">
+                        <img src="{% static 'images/photo2.jpg' %}">
+                    </div>
+                    <div class="about-col-2">
+                    <h1 class ="sub-title"> About Me</h1>
+
+                    <div class="text">I am a web developer with UI/UX expertise, experienced in HTML, CSS, JavaScript, and Flask. I build responsive websites and
+                         dynamic web applications with a focus on usability, clean design, and performance. I am eager to learn, grow, and contribute 
+                         to impactful projects.I have strong proficiency in Python, along with their associated frameworks and libraries,
+                          tailored for web development. I have applied these technologies  in several projects, gaining hands-on experience and practical knowledge in both web and app development environments.</div>
+
+                        <div class ="tab-titles">
+                            <p class ="tab-links active-links" onclick="opentab('education')">Education</p>
+                        </div>
+                        <div class ="tab-contents active-tab">
+                            <ul>
+                                <li><span>December,2022 -  current</span><br> Bachelor Of Software Engineering,School Of Engineering ,Pokhara University</li>
+                                <li><span>2020 - 2022 </span><br> SLC from Shree Shitaladevi community secondary school</li>
+                                <li><span>2018 - 2020</span><br> SEE from Shree Gogan Secondary School</li>
+                            </ul>
+                          </div>
+
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    
+
+        <section id="services" class="services">
+            <div class="myservices">
+                <h1>My Services</h1>
+            </div>
+            <div class="chart">
+                <div class="development half">
+                    <img src="{% static 'images/web-development.png' %}" alt="">
+                    <h2>Frontend Development</h2>
+                    <div class="text">I specialize in web development, crafting responsive and visually appealing
+                        websites that prioritize user experience. With a strong foundation in modern technologies like
+                        HTML, CSS, python,js and various frameworks, I create dynamic and functional web applications
+                        tailored to meet client needs. Whether it's building interactive websites from scratch or
+                        optimizing existing ones for performance, my goal is to deliver high-quality solutions that
+                        elevate your online presence.</div>
+                    <a href="#">Learn more</a>
+
+                </div>
+                <div class="development half">
+                    <img src="{% static 'images/web-development.png' %}" alt="">
+                    <h2>Backend Development (Python)</h2>
+                    <div class="text">I specialize in backend development using Python, building the server-side logic that powers dynamic and functional web applications. 
+                        My work includes developing RESTful routes, handling user authentication, managing sessions, and integrating backend logic with frontend templates using Jinja2.
+                         I am skilled in processing form data, implementing secure login/signup systems, and connecting applications to databases.  
+                     <a href="#">Learn more</a>
+                    
+                     </div>
+
+                </div>
+
+                <div class="development half">
+                    <img src="{% static 'images/ui-ux.png' %}" alt="">
+                    <h2>UI/UX Design</h2>
+                    <div class="text">I offer UI/UX design services that focus on creating intuitive and visually
+                        captivating user experiences. By understanding user behavior and preferences, I design
+                        interfaces that are not only aesthetically pleasing but also highly functional. My design
+                        process involves thorough research and prototyping to ensure that each product meets user needs
+                        while aligning with client goals. Whether itâ€™s a website or a mobile app, I strive to deliver
+                        designs that engage users, enhance usability, and drive satisfaction.</div>
+                 <a href="#">Learn more</a>
+                </div>
+            </div>
+
+        </section>
+
+
+
+        <section id="skills" class="skills">
+            <div class="myskills">
+                <h1>My Skills</h1>
+            </div>
+            <div class="chart">
+
+
+                <div class="language half">
+
+
+                    <table class="table">
+                        <tr>
+                            <td class="text">HTML</td>
+                            <td class="graph html"></td>
+                        </tr>
+                        <tr>
+                            <td class="text">CSS</td>
+                            <td class="graph css"></td>
+                        </tr>
+                        <tr>
+                            <td class="text">JavaScript</td>
+                            <td class="graph javascript"></td>
+                        </tr>
+                        <tr>
+                            <td class="text">PHP</td>
+                            <td class="graph php"></td>
+                        </tr>
+                        <tr>
+                            <td class="text">SQL</td>
+                            <td class="graph sql"></td>
+                        </tr>
+                        <tr>
+                            <td class="text">MongoDB</td>
+                            <td class="graph mongodb"></td>
+                        </tr>
+                        <tr>
+                            <td class="text">C++</td>
+                            <td class="graph cpp"></td>
+                        </tr>
+                        <tr>
+                            <td class="text">Python</td>
+                            <td class="graph python"></td>
+                        </tr>
+                        <tr>
+                            <td class="text">Java</td>
+                            <td class="graph java"></td>
+                        </tr>
+                    </table>
+
+
+
+
+                </div>
+
+                <div class="description half">
+                    <div class="skillsandexperience">
+
+                        <h2>My Skills and Experiences</h2>
+                        <div>
+                            I have strong proficiency in JavaScript and Python, along with their associated frameworks
+                            and libraries, tailored for web development. Additionally, I am experienced with UI/UX Design for
+                            mobile app development. I have applied these technologies in several projects, gaining
+                            hands-on experience and practical knowledge in both web and app development environments.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+
+
+
+
+        <section id="contact" class="contact">
+
+            <div class="contactme">
+                <h1>Contact me</h1>
+
+            </div>
+            <div class="chart">
+                <div class="contact_information half">
+                    <div class="follow">
+                        <h1>Connect on</h1>
+                    </div>
+                    <div class="icons">
+                        <a href="https://www.facebook.com/anjita.kandel.2025"><img src="{% static 'images/Facebook.png' %}" alt=""></a>
+                        <a href="https://wa.me/9844910872"><img src="{% static 'images/whatsapp.jpg' %}" alt=""></a>
+                        <a href="https://www.linkedin.com/in/anjita-kandel-928281285"><img src="{% static 'images/LinkedIn.png' %}" alt=""></a>
+                        <a href="https://github.com/anjitakandel41"><img class="github" src="{% static 'images/github.png' %}" alt=""></a>
+                        <a href="mailto:anjitakandel58@gmail.com"><img src="{% static 'images/email.png' %}" alt=""></a>
+
+                    </div>
+
+
+
+                </div>
+
+                <div class="contact_form half">
+                    <form class="contact-form" action="{% url 'submit_form' %}" method="post">{% csrf_token %}
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Your Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Send Message</button>
+                    </form>
+
+                </div>
+            </div>
+
+        </section>
+
+
+
+
+
+
+
+
+
+        <section id="footer" class="footer">
+            <div class="footername">Anjita kandel |</div> <img class="copyright" src="{% static 'images/Copyright-Symbol.png' %}"
+                alt="">
+            <div>2024 All rights reserved</div>
+
+        </section>
+    </div>
+
+<script>
+ var tablinks = document.getElementsByClassName("tab-links");
+ var tabcontents = document.getElementsByClassName("tab-contents");
+ 
+ function opentab(tabname){
+     for(tablink of tablinks){
+     tablink.classList.remove("active-link");
+}
+     for(tabcontent of tabcontents){
+     tabcontent.classList.remove("active-tab");
+}
+ event.currentTarget.classList.add("active-link");
+ document.getElementById(tabname).classList.add("active-tab");
+}
+</script>
+
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
+
+
+
