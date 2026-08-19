@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+
+{% set total_copies  = books | sum(attribute='quantity') %}
+{% set copies_out    = books | sum(attribute='issued') %}
+{% set open_loans    = issues | rejectattr('returned') | list %}
+{% set overdue_loans = open_loans | selectattr('return_date', 'lt', today) | list %}
+{% set fines_total   = issues | sum(attribute='fine') %}
+
+{% block title %}Library Dashboard{% endblock %}
+{% block portal %}Librarian portal{% endblock %}
+{% block page_title %}Library Dashboard{% endblock %}
+{% block page_sub %}Collection, circulation and member overview{% endblock %}
+
+{% block nav %}
+    <button type="button" class="tab-button active-tab" data-target="tab-overview">
+        <i class="fas fa-chart-simple"></i> Overview
+    </button>
+    <button type="button" class="tab-button" data-target="tab-books" id="viewBooksBtn">
+        <i class="fas fa-book"></i> Books <span class="count">{{ books|length }}</span>
+    </button>
+    <button type="button" class="tab-button" data-target="tab-circulation">
+        <i class="fas fa-right-left"></i> Circulation <span class="count">{{ open_loans|length }}</span>
+    </button>
+    <button type="button" class="tab-button" data-target="tab-members">
+        <i class="fas fa-users"></i> Members <span class="count">{{ users|length }}</span>
+    </button>
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= OVERVIEW ================= -->
+<div class="tab-section" id="tab-overview">
+
+    <div class="stats stats--3">
+        <div class="stat">
+            <span class="stat__icon"><i class="fas fa-book"></i></span>
+            <div>
+                <p class="stat__value">{{ books|length }}</p>
+                <p class="stat__label">Titles</p>
+            </div>
+        </div>
+
+        <div class="stat">
+            <span class="stat__icon stat__icon--ok"><i class="fas fa-layer-group"></i></span>
+            <div>
+                <p class="stat__value">{{ total_copies - copies_out }}<span style="font-size:.9rem;color:var(--muted);font-weight:500;"> / {{ total_copies }}</span></p>
+                <p class="stat__label">Copies free</p>
+            </div>
+        </div>
+
+        <div class="stat">
+            <span class="stat__icon stat__icon--warn"><i class="fas fa-right-left"></i></span>
+            <div>
+                <p class="stat__value">{{ open_loans|length }}</p>
+                <p class="stat__label">Active loans</p>
+            </div>
+        </div>
+
+        <div class="stat">
+            <span class="stat__icon stat__icon--danger"><i class="fas fa-triangle-exclamation"></i></span>
+            <div>
+                <p class="stat__value">{{ overdue_loans|length }}</p>
+                <p class="stat__label">Overdue</p>
+            </div>
+        </div>
+
+        <div class="stat">
+            <span class="stat__icon"><i class="fas fa-users"></i></span>
+            <div>
+                <p class="stat__value">{{ users|length }}</p>
+                <p class="stat__label">Members</p>
+            </div>
+        </div>
+
+        <div class="stat">
+            <span class="stat__icon stat__icon--danger"><i class="fas fa-receipt"></i></span>
+            <div>
+                <p class="stat__value">Rs. {{ fines_total }}</p>
+                <p class="stat__label">Total fines</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="panel">
+        <div class="panel__head">
+            <div>
+                <h2>Needs attention</h2>
+                <p>Loans that are past their due date</p>
+            </div>
+            <div class="spacer"></div>
+            <span class="badge {% if overdue_loans %}badge--danger{% else %}badge--ok{% endif %}">
+                {{ overdue_loans|length }} overdue
+            </span>
+        </div>
+
+        {% if overdue_loans %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Book</th>
+                        <th>Due</th>
+                        <th>Days late</th>
+                        <th class="right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for issue in overdue_loans %}
+                    <tr>
+                        <td class="cell-title">{{ issue.user_email }}</td>
+                        <td>
+                            {%- for book in books %}{% if book.id == issue.book_id %}{{ book.title|title }}{% endif %}{% endfor -%}
+                        </td>
+                        <td class="num">{{ issue.return_date }}</td>
+                        <td><span class="badge badge--danger">{{ issue.return_date | days_late }} day(s)</span></td>
+                        <td class="right">
+                            <a href="{{ url_for('return_book', issue_id=issue.id) }}"
+                               class="btn btn--sm" data-confirm="Mark this book as returned?">
+                                <i class="fas fa-rotate-left"></i> Return
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">
+            <i class="fas fa-circle-check"></i>
+            <strong>Nothing overdue</strong>
+            <p>Every borrowed book is still within its loan period.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<!-- ================= BOOKS ================= -->
+<div class="tab-section" id="tab-books" hidden>
+
+    <section class="panel">
+        <div class="panel__head">
+            <div>
+                <h2>Add a book</h2>
+                <p>New titles become available to members immediately</p>
+            </div>
+        </div>
+        <div class="panel__body">
+            <form method="post" action="{{ url_for('add_book') }}" class="form-grid">
+                <div class="field">
+                    <label for="bookTitle">Title</label>
+                    <div class="field__control">
+                        <i class="fas fa-book"></i>
+                        <input type="text" name="title" id="bookTitle" placeholder="Calculus I" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="bookAuthor">Author</label>
+                    <div class="field__control">
+                        <i class="fas fa-feather"></i>
+                        <input type="text" name="author" id="bookAuthor" placeholder="Pratap Tiwari" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="bookCategory">Category</label>
+                    <div class="field__control">
+                        <i class="fas fa-tag"></i>
+                        <input type="text" name="category" id="bookCategory" placeholder="Mathematics" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="bookQuantity">Copies</label>
+                    <div class="field__control">
+                        <i class="fas fa-hashtag"></i>
+                        <input type="number" name="quantity" id="bookQuantity" placeholder="3" min="1" required>
+                    </div>
+                </div>
+
+                <div class="field field--action">
+                    <button type="submit" class="btn">
+                        <i class="fas fa-plus"></i> Add book
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel__head">
+            <div>
+                <h2>Catalogue</h2>
+                <p>{{ books|length }} title{{ '' if books|length == 1 else 's' }} in the collection</p>
+            </div>
+            <div class="spacer"></div>
+            <div class="search">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="search" placeholder="Search title, author, category…" data-search="booksTable">
+            </div>
+        </div>
+
+        {% if books %}
+        <div class="table-wrap">
+            <table id="booksTable">
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Category</th>
+                        <th>Availability</th>
+                        <th>On loan</th>
+                        <th class="right">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for book in books %}
+                    {% set available = book.quantity - book.issued %}
+                    <tr class="book-item">
+                        <td>
+                            <div class="book-cell">
+                                <span class="book-cell__cover">{{ book.title[0] }}</span>
+                                <span>
+                                    <span class="cell-title">{{ book.title|title }}</span>
+                                    <span class="cell-sub">{{ book.author|title }}</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge--muted badge--plain">{{ book.category|trim|title }}</span></td>
+                        <td>
+                            <span class="num">{{ available }} of {{ book.quantity }}</span>
+                            <span class="meter {% if available == 0 %}meter--full{% endif %}">
+                                <span style="width: {{ (available / book.quantity * 100) | round | int }}%"></span>
+                            </span>
+                        </td>
+                        <td class="num">{{ book.issued }}</td>
+                        <td class="right">
+                            {% if available > 0 %}
+                                <span class="badge badge--ok">Available</span>
+                            {% else %}
+                                <span class="badge badge--danger">All out</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">
+            <i class="fas fa-book"></i>
+            <strong>No books yet</strong>
+            <p>Add your first title using the form above.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<!-- ================= CIRCULATION ================= -->
+<div class="tab-section" id="tab-circulation" hidden>
+
+    <section class="panel">
+        <div class="panel__head">
+            <div>
+                <h2>Issue a book</h2>
+                <p>Loans run for 7 days · Rs. 5 per day late</p>
+            </div>
+        </div>
+        <div class="panel__body">
+            <form method="post" action="{{ url_for('issue_book') }}" class="form-grid">
+                <div class="field">
+                    <label for="issueUser">Member</label>
+                    <div class="field__control">
+                        <i class="fas fa-user"></i>
+                        <select name="user_email" id="issueUser" required>
+                            <option value="">Select member</option>
+                            {% for user in users %}
+                            <option value="{{ user.email }}">{{ user.first_name }} {{ user.last_name }} — {{ user.email }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="issueBook">Book</label>
+                    <div class="field__control">
+                        <i class="fas fa-book"></i>
+                        <select name="book_id" id="issueBook" required>
+                            <option value="">Select book</option>
+                            {% for book in books %}
+                            <option value="{{ book.id }}" {% if book.quantity - book.issued <= 0 %}disabled{% endif %}>
+                                {{ book.title|title }}{% if book.quantity - book.issued <= 0 %} (unavailable){% else %} ({{ book.quantity - book.issued }} left){% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field field--action">
+                    <button type="submit" class="btn">
+                        <i class="fas fa-paper-plane"></i> Issue book
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel__head">
+            <div>
+                <h2>Loan register</h2>
+                <p>{{ open_loans|length }} active · {{ issues|length }} total</p>
+            </div>
+            <div class="spacer"></div>
+            <div class="search">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="search" placeholder="Search member or book…" data-search="issuesTable">
+            </div>
+        </div>
+
+        {% if issues %}
+        <div class="table-wrap">
+            <table id="issuesTable">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Book</th>
+                        <th>Issued</th>
+                        <th>Due</th>
+                        <th>Status</th>
+                        <th>Fine</th>
+                        <th class="right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for issue in issues %}
+                    <tr>
+                        <td class="cell-title">{{ issue.user_email }}</td>
+                        <td>
+                            {%- for book in books %}{% if book.id == issue.book_id %}{{ book.title|title }}{% endif %}{% endfor -%}
+                        </td>
+                        <td class="num">{{ issue.issue_date }}</td>
+                        <td class="num">{{ issue.return_date }}</td>
+                        <td>
+                            {% if issue.returned %}
+                                <span class="badge badge--muted">Returned</span>
+                            {% elif issue.return_date < today %}
+                                <span class="badge badge--danger">Overdue</span>
+                            {% else %}
+                                <span class="badge badge--info">On loan</span>
+                            {% endif %}
+                        </td>
+                        <td class="num">
+                            {% if issue.fine %}
+                                <span class="unavailable">Rs. {{ issue.fine }}</span>
+                            {% else %}
+                                <span style="color:var(--muted)">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="right">
+                            {% if not issue.returned %}
+                            <a href="{{ url_for('return_book', issue_id=issue.id) }}"
+                               class="btn btn--sm" data-confirm="Mark this book as returned?">
+                                <i class="fas fa-rotate-left"></i> Return
+                            </a>
+                            {% else %}
+                            <span style="color:var(--muted)">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">
+            <i class="fas fa-right-left"></i>
+            <strong>No loans recorded</strong>
+            <p>Issue a book above to start the register.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<!-- ================= MEMBERS ================= -->
+<div class="tab-section" id="tab-members" hidden>
+    <section class="panel">
+        <div class="panel__head">
+            <div>
+                <h2>Registered members</h2>
+                <p>{{ users|length }} account{{ '' if users|length == 1 else 's' }}</p>
+            </div>
+            <div class="spacer"></div>
+            <div class="search">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="search" placeholder="Search name or email…" data-search="usersTable">
+            </div>
+        </div>
+
+        {% if users %}
+        <div class="table-wrap">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th class="right">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            <div class="book-cell">
+                                <span class="avatar">{{ (user.first_name[0] ~ user.last_name[0])|upper }}</span>
+                                <span class="cell-title">{{ user.first_name|title }} {{ user.last_name|title }}</span>
+                            </div>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="badge {% if user.role == 'librarian' %}badge--info{% else %}badge--muted{% endif %}">
+                                {{ user.role|default('student')|capitalize }}
+                            </span>
+                        </td>
+                        <td class="right">
+                            {% if user.active %}
+                                <span class="badge badge--ok">Active</span>
+                            {% else %}
+                                <span class="badge badge--danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">
+            <i class="fas fa-users"></i>
+            <strong>No members yet</strong>
+            <p>Registered accounts will appear here.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+{% endblock %}

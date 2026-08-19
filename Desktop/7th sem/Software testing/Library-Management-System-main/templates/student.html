@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% set on_shelf = [] %}
+{% for book in books %}{% if book.quantity - book.issued > 0 %}{% set _ = on_shelf.append(book) %}{% endif %}{% endfor %}
+{% set open_loans    = my_issues | rejectattr('returned') | list %}
+{% set overdue_loans = open_loans | selectattr('return_date', 'lt', today) | list %}
+{% set fines_total   = my_issues | sum(attribute='fine') %}
+
+{% block title %}Student Dashboard{% endblock %}
+{% block portal %}Student portal{% endblock %}
+{% block page_title %}Student Dashboard{% endblock %}
+{% block page_sub %}Browse the catalogue and track your loans{% endblock %}
+
+{% block nav %}
+    <button type="button" class="tab-button active-tab" data-target="tab-catalog" id="viewBooksBtn">
+        <i class="fas fa-book"></i> Catalogue <span class="count">{{ on_shelf|length }}</span>
+    </button>
+    <button type="button" class="tab-button" data-target="tab-loans">
+        <i class="fas fa-bookmark"></i> My loans <span class="count">{{ open_loans|length }}</span>
+    </button>
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= CATALOGUE ================= -->
+<div class="tab-section" id="tab-catalog">
+
+    <div class="stats">
+        <div class="stat">
+            <span class="stat__icon"><i class="fas fa-book"></i></span>
+            <div>
+                <p class="stat__value">{{ on_shelf|length }}</p>
+                <p class="stat__label">Titles available</p>
+            </div>
+        </div>
+
+        <div class="stat">
+            <span class="stat__icon stat__icon--ok"><i class="fas fa-bookmark"></i></span>
+            <div>
+                <p class="stat__value">{{ open_loans|length }}</p>
+                <p class="stat__label">Books with you</p>
+            </div>
+        </div>
+
+        <div class="stat">
+            <span class="stat__icon stat__icon--warn"><i class="fas fa-clock"></i></span>
+            <div>
+                <p class="stat__value">{{ overdue_loans|length }}</p>
+                <p class="stat__label">Overdue</p>
+            </div>
+        </div>
+
+        <div class="stat">
+            <span class="stat__icon stat__icon--danger"><i class="fas fa-receipt"></i></span>
+            <div>
+                <p class="stat__value">Rs. {{ fines_total }}</p>
+                <p class="stat__label">Fines owed</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="panel">
+        <div class="panel__head">
+            <div>
+                <h2>Available books</h2>
+                <p>Ask the librarian at the desk to issue any title</p>
+            </div>
+            <div class="spacer"></div>
+            <div class="search">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="search" placeholder="Search title, author, category…" data-search="catalogTable">
+            </div>
+        </div>
+
+        {% if on_shelf %}
+        <div class="table-wrap">
+            <table id="catalogTable">
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Category</th>
+                        <th>Copies free</th>
+                        <th class="right">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for book in on_shelf %}
+                    {% set available = book.quantity - book.issued %}
+                    <tr class="book-item">
+                        <td>
+                            <div class="book-cell">
+                                <span class="book-cell__cover">{{ book.title[0] }}</span>
+                                <span>
+                                    <span class="cell-title">{{ book.title|title }}</span>
+                                    <span class="cell-sub">{{ book.author|title }}</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge--muted badge--plain">{{ book.category|trim|title }}</span></td>
+                        <td>
+                            <span class="num">{{ available }} of {{ book.quantity }}</span>
+                            <span class="meter">
+                                <span style="width: {{ (available / book.quantity * 100) | round | int }}%"></span>
+                            </span>
+                        </td>
+                        <td class="right">
+                            {% if available > 2 %}
+                                <span class="badge badge--ok">On shelf</span>
+                            {% else %}
+                                <span class="badge badge--warn">Few left</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">
+            <i class="fas fa-book"></i>
+            <strong>Nothing on the shelf right now</strong>
+            <p>Every copy is currently on loan. Please check back later.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<!-- ================= MY LOANS ================= -->
+<div class="tab-section" id="tab-loans" hidden>
+    <section class="panel">
+        <div class="panel__head">
+            <div>
+                <h2>My borrowing history</h2>
+                <p>Loans run for 7 days · Rs. 5 per day late</p>
+            </div>
+            <div class="spacer"></div>
+            <span class="badge {% if overdue_loans %}badge--danger{% else %}badge--ok{% endif %}">
+                {{ open_loans|length }} on loan
+            </span>
+        </div>
+
+        {% if my_issues %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Issued</th>
+                        <th>Due</th>
+                        <th>Status</th>
+                        <th class="right">Fine</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for issue in my_issues %}
+                    <tr>
+                        <td class="cell-title">
+                            {%- for book in books %}{% if book.id == issue.book_id %}{{ book.title|title }}{% endif %}{% endfor -%}
+                        </td>
+                        <td class="num">{{ issue.issue_date }}</td>
+                        <td class="num">{{ issue.return_date }}</td>
+                        <td>
+                            {% if issue.returned %}
+                                <span class="badge badge--muted">Returned</span>
+                            {% elif issue.return_date < today %}
+                                <span class="badge badge--danger">{{ issue.return_date | days_late }} day(s) late</span>
+                            {% else %}
+                                <span class="badge badge--info">On loan</span>
+                            {% endif %}
+                        </td>
+                        <td class="right num">
+                            {% if issue.fine %}
+                                <span class="unavailable">Rs. {{ issue.fine }}</span>
+                            {% else %}
+                                <span style="color:var(--muted)">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">
+            <i class="fas fa-bookmark"></i>
+            <strong>You haven't borrowed anything yet</strong>
+            <p>Browse the catalogue and visit the desk to issue a book.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+{% endblock %}
