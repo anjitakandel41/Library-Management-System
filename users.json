@@ -30,5 +30,13 @@
         "password": "scrypt:32768:8:1$m3srVZZDBdWzx9Tf$be05ada3a224889b9d998f301e182f3cb29be285e60c5463eb8822d009b653fd4a268871d5fd8fb12b592984facaf68487415c862d251c1916b9f39a30dd6ff8",
         "role": "student",
         "active": true
+    },
+    {
+        "first_name": "jiii",
+        "last_name": "oooo",
+        "email": "jiioo@gmail.com",
+        "password": "scrypt:32768:8:1$4tUg3nohCSln8e7T$72e3cb365b3bcbb211539fdb543d5a695a9f0ad75e7318bc0ec1764d9339aaf58209e24bc5e6fb32da112c8829bec09f84177f12aac76124fee55021e0ad3057",
+        "role": "librarian",
+        "active": true
     }
 ]

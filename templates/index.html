@@ -3,134 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Register</title>
+    <title>Sign In · Aurora Library</title>
+
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Flask CSS -->
+    <!-- App CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
+
 <!-- ================= REGISTER ================= -->
 
-<div class="container" id="signup" style="display:none;">
-    <h1 class="form-title">Register</h1>
-
-    <form method="post" action="/register">
-
-        <!-- ROLE -->
-        <div class="input-group">
-            <i class="fas fa-user-tag"></i>
-            <select name="role" required>
-                <option value="">Select Role</option>
-                <option value="student">Student</option>
-                <option value="librarian">Librarian</option>
-            </select>
+<div class="auth">
+    <aside class="auth__brand">
+        <div class="brand-mark">
+            <span class="brand-mark__icon"><i class="fas fa-book-open-reader"></i></span>
+            <span>Aurora Library
+                <small>Management System</small>
+            </span>
         </div>
 
-        <div class="input-group">
-            <i class="fas fa-user"></i>
-            <input type="text" name="fName" placeholder="First Name" required> <label>First Name</label>
+        <div class="auth__pitch">
+            <h2>Every book accounted for. Every borrower on time.</h2>
+            <p>A single workspace for cataloguing your collection, issuing titles to members
+               and tracking returns before they turn into fines.</p>
+
+            <div class="auth__stats">
+                <div>
+                    <strong>24/7</strong>
+                    <span>Catalog access</span>
+                </div>
+                <div>
+                    <strong>7 days</strong>
+                    <span>Standard loan</span>
+                </div>
+                <div>
+                    <strong>Rs. 5</strong>
+                    <span>Fine per day</span>
+                </div>
+            </div>
         </div>
 
-        <div class="input-group">
-            <i class="fas fa-user"></i>
-            <input type="text" name="lName" placeholder="Last Name" required> <label>Last Name</label>
+        <p class="auth__note">&copy; 2026 Aurora Library. Internal use only.</p>
+    </aside>
+
+    <!-- ================= FORM PANEL ================= -->
+    <main class="auth__panel">
+
+        <!-- ---------- REGISTER (kept first in DOM for existing tests) ---------- -->
+        <div class="container" id="signup" style="display:none;">
+            <h1 class="form-title">Create your account</h1>
+            <p class="form-sub">Join the library in less than a minute.</p>
+
+            <div class="switcher" role="tablist">
+                <button type="button" id="signInButton">Sign In</button>
+                <button type="button" class="is-active">Sign Up</button>
+            </div>
+
+            <form method="post" action="/register" autocomplete="off">
+
+                <div class="field">
+                    <label for="signupRole">I am a</label>
+                    <div class="field__control">
+                        <i class="fas fa-user-tag"></i>
+                        <select name="role" id="signupRole" required>
+                            <option value="">Select role</option>
+                            <option value="student">Student</option>
+                            <option value="librarian">Librarian</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="signupFirst">First name</label>
+                        <div class="field__control">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="fName" id="signupFirst" placeholder="Anjita" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="signupLast">Last name</label>
+                        <div class="field__control">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="lName" id="signupLast" placeholder="Kandel" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="signupEmail">Email address</label>
+                    <div class="field__control">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" id="signupEmail" placeholder="you@college.edu.np" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="signupPassword">Password</label>
+                    <div class="field__control field__control--pw">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" id="signupPassword" placeholder="At least 6 characters" required>
+                        <button type="button" class="pw-toggle" data-toggle-password="signupPassword"
+                                aria-label="Show password" aria-pressed="false" title="Show password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn--block" id="registerBtn">
+                    Create account <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <p class="or"><span>or continue with</span></p>
+
+            <div class="icons">
+                <a href="https://www.google.com" target="_blank" rel="noopener">
+                    <i class="fab fa-google"></i> Google
+                </a>
+                <a href="https://www.facebook.com/anjita.kandel" target="_blank" rel="noopener">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </a>
+            </div>
+
+            <p class="links">
+                Already have an account?
+                <button type="button" data-switch="signIn">Sign in</button>
+            </p>
         </div>
 
-        <div class="input-group">
-            <i class="fas fa-envelope"></i>
-            <input type="email" name="email" placeholder="Email" required> <label> Email</label>
+        <!-- ---------- LOGIN ---------- -->
+        <div class="container" id="signIn">
+            <h1 class="form-title">Welcome back</h1>
+            <p class="form-sub">Sign in to manage your library account.</p>
+
+            <div class="switcher" role="tablist">
+                <button type="button" class="is-active">Sign In</button>
+                <button type="button" id="signUpButton">Sign Up</button>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+                {% for message in messages %}
+                    {% set is_error = 'Invalid' in message or 'exists' in message %}
+                    <div class="alert {% if is_error %}error{% else %}success{% endif %}">
+                        <i class="fas {% if is_error %}fa-circle-exclamation{% else %}fa-circle-check{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            <form method="post" action="/login">
+
+                <div class="field">
+                    <label for="loginEmail">Email address</label>
+                    <div class="field__control">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" id="loginEmail" placeholder="you@college.edu.np" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="loginPassword">Password</label>
+                    <div class="field__control field__control--pw">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" id="loginPassword" placeholder="Enter your password" required>
+                        <button type="button" class="pw-toggle" data-toggle-password="loginPassword"
+                                aria-label="Show password" aria-pressed="false" title="Show password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <p class="recover"><a href="#">Forgot password?</a></p>
+
+                <button type="submit" class="btn btn--block" id="loginBtn">
+                    Sign in <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <p class="or"><span>or continue with</span></p>
+
+            <div class="icons">
+                <a href="https://www.google.com" target="_blank" rel="noopener">
+                    <i class="fab fa-google"></i> Google
+                </a>
+                <a href="https://www.facebook.com/anjita.kandel" target="_blank" rel="noopener">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </a>
+            </div>
+
+            <p class="links">
+                Don't have an account?
+                <button type="button" data-switch="signup">Sign up</button>
+            </p>
         </div>
 
-        <div class="input-group">
-            <i class="fas fa-lock"></i>
-            <input type="password" name="password" placeholder="Password" required> <label>Password</label>
-        </div>
-
-        <button class="btn">Sign Up</button>
-    </form>
-
-    <p class="or">---------- or ----------</p>
-
-    <div class="icons">
-        <a href="https://www.google.com" target="_blank">
-  <i class="fab fa-google" style="font-size:50px; color:#4285F4;"></i>
-</a>
- 
-        <a href="https://www.facebook.com/anjita.kandel " target="_blank">
-        <i class="fab fa-facebook"></i></a>
-    </div>
-
-    <div class="links">
-        <p>Already have an account?</p>
-        <button id="signInButton">Sign In</button>
-    </div>
+    </main>
 </div>
 
-<!-- ================= LOGIN ================= -->
-<div class="container" id="signIn">
-    <h1 class="form-title">Sign In</h1>
-
-    {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div class="alert error">
-      {{ messages[0] }}
-    </div>
-  {% endif %}
-{% endwith %}
-
-    <form method="post" action="/login">
-
-        <div class="input-group">
-        <i class="fas fa-user-tag"></i>
-        <select name="role" required>
-            <option value="">Select Role</option>
-            <option value="student">Student</option>
-            <option value="librarian">Librarian</option>
-        </select>
-    </div>
-
-
-        <div class="input-group">
-            <i class="fas fa-envelope"></i>
-            <input type="email" name="email" placeholder="Email" required><label>Email</label>
-        </div>
-
-        <div class="input-group">
-            <i class="fas fa-lock"></i>
-            <input type="password" name="password" placeholder="Password" required><label>Password</label>
-        </div>
-
-        <p class="recover">
-            <a href="#">Recover Password</a>
-        </p>
-
-        <button class="btn">Sign In</button>
-    </form>
-
-    <p class="or">---------- or ----------</p>
-
-    <div class="icons">
-        <a href="https://www.google.com" target="_blank">
-  <i class="fab fa-google" style="font-size:30px; color:#4285F4;"></i>
-</a>
-
-        <a href=" https://www.facebook.com/anjita.kandel " target="_blank">
-        <i class="fab fa-facebook"></i>
-        </a>
-    </div>
-
-    <div class="links">
-        <p>Don't have an account?</p>
-        <button id="signUpButton">Sign Up</button>
-    </div>
-</div>
-
-<!-- Flask JS -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

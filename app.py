@@ -25,6 +25,41 @@ def find_user(email):
     users = load_json(USERS_FILE)
     return next((u for u in users if u["email"] == email), None)
 
+def today_str():
+    return datetime.now().strftime("%Y-%m-%d")
+
+# ---------- Template Helpers ----------
+@app.template_filter("days_late")
+def days_late(due_date):
+    """Whole days a loan is past its due date (0 if still on time)."""
+    try:
+        due = datetime.strptime(due_date, "%Y-%m-%d")
+    except (TypeError, ValueError):
+        return 0
+    return max(0, (datetime.now() - due).days)
+
+@app.context_processor
+def inject_current_user():
+    """Name, initials and role of the signed-in user, for the app shell."""
+    email = session.get("user")
+    user = find_user(email) if email else None
+
+    if user:
+        name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
+        initials = "".join(part[0] for part in name.split()[:2]).upper()
+    else:
+        name, initials = "Guest", "G"
+
+    return {
+        "current_user": {
+            "email": email or "",
+            "name": name or (email or "Guest"),
+            "initials": initials or "U",
+            "role": session.get("role", "guest"),
+        },
+        "today": today_str(),
+    }
+
 # ---------- Routes ----------
 @app.route('/')
 def home():
@@ -108,7 +143,11 @@ def student_dashboard():
         return redirect(url_for('home'))
 
     books = load_json(BOOKS_FILE)
-    return render_template("student.html", books=books)
+    issues = load_json(ISSUES_FILE)
+
+    my_issues = [i for i in issues if i["user_email"] == session["user"]]
+
+    return render_template("student.html", books=books, my_issues=my_issues)
 
 # ---------- BOOK MANAGEMENT (LIBRARIAN ONLY) ----------
 @app.route('/add_book', methods=['POST'])
