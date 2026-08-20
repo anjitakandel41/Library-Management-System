@@ -38,5 +38,13 @@
         "password": "scrypt:32768:8:1$4tUg3nohCSln8e7T$72e3cb365b3bcbb211539fdb543d5a695a9f0ad75e7318bc0ec1764d9339aaf58209e24bc5e6fb32da112c8829bec09f84177f12aac76124fee55021e0ad3057",
         "role": "librarian",
         "active": true
+    },
+    {
+        "first_name": "Anjita",
+        "last_name": "Kandel",
+        "email": "anjitakandel58@gmail.com",
+        "password": "scrypt:32768:8:1$V0zA3wMug28PtVq2$0fd25a9a09e13529125351545257a2f3ba48eed1d900b4a25d9ef631a5ba0a504762b92ae89079ef1ea4738cb6ff2b71888ad5d546eecc1c039579bf2cb99c5c",
+        "role": "student",
+        "active": true
     }
 ]
